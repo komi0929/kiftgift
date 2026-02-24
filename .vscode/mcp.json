@@ -1,0 +1,19 @@
+{
+  "servers": {
+    "supabase": {
+      "command": "npx",
+      "args": ["-y", "@supabase/mcp-server-supabase@latest", "--read-only"],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "${input:supabase_token}"
+      }
+    }
+  },
+  "inputs": [
+    {
+      "id": "supabase_token",
+      "type": "promptString",
+      "description": "Supabase Personal Access Token (PAT)",
+      "password": true
+    }
+  ]
+}
