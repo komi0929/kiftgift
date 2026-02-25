@@ -44,6 +44,7 @@ export default function BottomNav() {
             <Link
               key={tab.href}
               href={tab.href}
+              aria-label={tab.label}
               style={{
                 display: 'flex',
                 flexDirection: 'column',

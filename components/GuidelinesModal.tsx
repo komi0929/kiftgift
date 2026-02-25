@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '@/lib/supabase/client';
 
 interface GuidelinesModalProps {
   onAgree: () => void;
@@ -32,9 +33,49 @@ export default function GuidelinesModal({ onAgree }: GuidelinesModalProps) {
     return localStorage.getItem('kifutogift-guidelines-agreed') === 'true';
   });
 
+  // Also check Supabase for authenticated users (ITP-resilient)
+  useEffect(() => {
+    if (agreed) return;
+    (async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user) return;
+        const { data } = await supabase
+          .from('users')
+          .select('agreed_guidelines_at')
+          .eq('id', user.id)
+          .single();
+        if (data?.agreed_guidelines_at) {
+          localStorage.setItem('kifutogift-guidelines-agreed', 'true');
+          setAgreed(true);
+        }
+      } catch {
+        // Supabase not available — rely on localStorage
+      }
+    })();
+  }, [agreed]);
+
   const handleAgree = () => {
     localStorage.setItem('kifutogift-guidelines-agreed', 'true');
     setAgreed(true);
+    // Also persist to Supabase for authenticated users
+    (async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (user) {
+          await supabase
+            .from('users')
+            .update({ agreed_guidelines_at: new Date().toISOString() })
+            .eq('id', user.id);
+        }
+      } catch {
+        // localStorage is the primary store
+      }
+    })();
     onAgree();
   };
 

@@ -28,8 +28,22 @@ serve(async (req) => {
   try {
     const { circle_id, gift_type, title, description } = await req.json();
 
-    if (!circle_id) {
+    if (!circle_id || typeof circle_id !== 'string') {
       return new Response(JSON.stringify({ error: 'circle_id required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Input length validation
+    if (title && typeof title === 'string' && title.length > 200) {
+      return new Response(JSON.stringify({ error: 'Title too long' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    if (description && typeof description === 'string' && description.length > 2000) {
+      return new Response(JSON.stringify({ error: 'Description too long' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });

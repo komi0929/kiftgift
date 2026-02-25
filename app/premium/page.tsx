@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Crown, Check, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { redirectToCheckout } from '@/lib/stripe';
 
 const FEATURES = [
   { emoji: '🔄', title: '輪を無制限に作成', desc: 'Free版は最大2つの輪まで。Premiumは無制限。' },
@@ -19,50 +20,25 @@ const FEATURES = [
 
 export default function PremiumPage() {
   const [processing, setProcessing] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubscribe = () => {
+  const handleSubscribe = async () => {
     setProcessing(true);
-    setTimeout(() => {
+    setError('');
+    try {
+      // In production, this redirects to Stripe Checkout
+      await redirectToCheckout('current-user-id');
+    } catch (err) {
+      // If Stripe is not configured, show friendly message
+      const message = err instanceof Error ? err.message : 'エラーが発生しました';
+      if (message.includes('Checkout failed') || message.includes('Invalid')) {
+        setError('決済サービスは現在準備中です。もうしばらくお待ちください。');
+      } else {
+        setError(message);
+      }
       setProcessing(false);
-      setSuccess(true);
-    }, 1500);
+    }
   };
-
-  if (success) {
-    return (
-      <div
-        className="page-container"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '70vh',
-        }}
-      >
-        <motion.div
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-          style={{ textAlign: 'center' }}
-        >
-          <div style={{ fontSize: 56, marginBottom: 16 }}>👑</div>
-          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Premium へようこそ！</h2>
-          <p style={{ fontSize: 13, color: '#888', marginBottom: 24, lineHeight: 1.6 }}>
-            感謝の輪をもっと広げましょう ✨
-          </p>
-          <Link
-            href="/wants"
-            className="btn btn-primary"
-            style={{ textDecoration: 'none', padding: '12px 24px' }}
-          >
-            フィードに戻る
-          </Link>
-        </motion.div>
-      </div>
-    );
-  }
 
   return (
     <div className="page-container">
@@ -188,6 +164,22 @@ export default function PremiumPage() {
       >
         {processing ? '処理中...' : '✨ Premium に登録する'}
       </button>
+
+      {error && (
+        <div
+          style={{
+            marginTop: 12,
+            padding: '10px 16px',
+            borderRadius: 10,
+            background: '#FFF0F0',
+            color: '#cc0000',
+            fontSize: 12,
+            textAlign: 'center',
+          }}
+        >
+          {error}
+        </div>
+      )}
     </div>
   );
 }

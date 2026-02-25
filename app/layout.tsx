@@ -17,6 +17,20 @@ export const metadata: Metadata = {
   title: 'キフトギフト — 感謝の連鎖を、あなたから',
   description:
     'お金を使わずに、ありがとうが複利で社会全体を豊かにしていく、AIが守るギフトエコノミー・プラットフォーム',
+  openGraph: {
+    title: 'キフトギフト — 感謝の連鎖を、あなたから',
+    description: 'AIが守るギフトエコノミー・プラットフォーム',
+    url: 'https://kiftgift.vercel.app',
+    siteName: 'キフトギフト',
+    type: 'website',
+    locale: 'ja_JP',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'キフトギフト',
+    description: 'AIが守るギフトエコノミー・プラットフォーム',
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({

@@ -29,8 +29,14 @@ export async function redirectToCheckout(userId: string, email?: string) {
   }
 
   const { url } = await res.json();
-  if (url) {
+  if (
+    url &&
+    (url.startsWith('https://checkout.stripe.com/') ||
+      url.startsWith('https://billing.stripe.com/'))
+  ) {
     window.location.href = url;
+  } else if (url) {
+    throw new Error('Invalid checkout URL');
   }
 }
 
