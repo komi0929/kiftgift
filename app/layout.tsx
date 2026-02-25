@@ -4,6 +4,7 @@ import './globals.css';
 import BottomNav from '@/components/BottomNav';
 import RippleEffect from '@/components/RippleEffect';
 import SideDrawer from '@/components/SideDrawer';
+import ClientProviders from '@/components/ClientProviders';
 import Link from 'next/link';
 
 const notoSansJP = Noto_Sans_JP({
@@ -41,81 +42,83 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <body className={notoSansJP.variable} style={{ fontFamily: '"Noto Sans JP", sans-serif' }}>
-        {/* Header — nani style: hamburger | center logo | action */}
-        <header
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 40,
-            background: '#ffffff',
-            borderBottom: '1px solid #f0f0f0',
-          }}
-        >
-          <div
+        <ClientProviders>
+          {/* Header — nani style: hamburger | center logo | action */}
+          <header
             style={{
-              maxWidth: 560,
-              margin: '0 auto',
-              padding: '12px 20px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 40,
+              background: '#ffffff',
+              borderBottom: '1px solid #f0f0f0',
             }}
           >
-            {/* Left: Menu — opens SideDrawer via client component */}
-            <SideDrawer />
-
-            {/* Center: Logo */}
-            <Link
-              href="/wants"
-              style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}
+            <div
+              style={{
+                maxWidth: 560,
+                margin: '0 auto',
+                padding: '12px 20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
             >
-              <div
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 10,
-                  background: '#F5D946',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 18,
-                }}
+              {/* Left: Menu — opens SideDrawer via client component */}
+              <SideDrawer />
+
+              {/* Center: Logo */}
+              <Link
+                href="/wants"
+                style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}
               >
-                🎁
-              </div>
-              <span
-                style={{
-                  fontSize: 16,
-                  fontWeight: 700,
-                  color: '#1a1a1a',
-                  letterSpacing: '-0.02em',
-                }}
+                <div
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 10,
+                    background: '#F5D946',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 18,
+                  }}
+                >
+                  🎁
+                </div>
+                <span
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 700,
+                    color: '#1a1a1a',
+                    letterSpacing: '-0.02em',
+                  }}
+                >
+                  キフトギフト
+                </span>
+              </Link>
+
+              {/* Right: Action — linked to /post */}
+              <Link
+                href="/post"
+                className="btn btn-primary btn-small"
+                style={{ padding: '8px 16px', fontSize: 12, textDecoration: 'none' }}
               >
-                キフトギフト
-              </span>
-            </Link>
+                投稿する
+              </Link>
+            </div>
+          </header>
 
-            {/* Right: Action — linked to /post */}
-            <Link
-              href="/post"
-              className="btn btn-primary btn-small"
-              style={{ padding: '8px 16px', fontSize: 12, textDecoration: 'none' }}
-            >
-              投稿する
-            </Link>
-          </div>
-        </header>
+          {/* Main Content */}
+          {children}
 
-        {/* Main Content */}
-        {children}
+          {/* Bottom Navigation */}
+          <BottomNav />
 
-        {/* Bottom Navigation */}
-        <BottomNav />
-
-        {/* Ripple Effect Overlay */}
-        <RippleEffect />
+          {/* Ripple Effect Overlay */}
+          <RippleEffect />
+        </ClientProviders>
       </body>
     </html>
   );

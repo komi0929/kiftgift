@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import AuthGuard from '@/components/AuthGuard';
 
 export const metadata: Metadata = {
   title: 'ギフト一覧 — キフトギフト',
@@ -6,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function GivesLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return <AuthGuard>{children}</AuthGuard>;
 }
